@@ -1,0 +1,20 @@
+2022-06-26 21:46:49,624 [INFO] Running on device: cpu
+2022-06-26 21:46:49,624 [INFO] Log dir: logs/dev_26_06_2022_21_46_49
+2022-06-26 21:46:49,639 [INFO] Running problem with 20 sensors 10 targets: (checkpoint: None, seed : 123, config: configs/dev.yml)
+2022-06-26 21:46:49,657 [INFO] Generating training dataset
+2022-06-26 21:46:49,671 [INFO] Generating validation dataset
+2022-06-26 21:46:49,674 [INFO] Begin training phase
+2022-06-26 21:46:49,675 [INFO] Start epoch 0
+2022-06-26 21:46:49,835 [INFO] 	Batch 0/10, mean_policy_losses: 18.659, mean_net_lifetime: 636.5836, mean_mc_travel_dist: 2545.8969, mean_rewards: 33.5044, total_rewards: 127.4043, mean_steps: 18.0000, mean_ecr: 19.6721 mean_entropies: 2.9971, took: 0.1589s
+2022-06-26 21:46:50,061 [INFO] 	Batch 1/10, mean_policy_losses: 54.563, mean_net_lifetime: 2253.9022, mean_mc_travel_dist: 5732.4820, mean_rewards: 50.0867, total_rewards: 1107.4058, mean_steps: 44.0000, mean_ecr: 18.1782 mean_entropies: 2.9930, took: 0.2277s
+2022-06-26 21:46:50,226 [INFO] 	Batch 2/10, mean_policy_losses: 339.679, mean_net_lifetime: 4045.3443, mean_mc_travel_dist: 2211.4128, mean_rewards: 149.8276, total_rewards: 3603.0618, mean_steps: 26.0000, mean_ecr: 14.3495 mean_entropies: 2.9898, took: 0.1651s
+2022-06-26 21:46:50,608 [INFO] 	Batch 3/10, mean_policy_losses: 42.232, mean_net_lifetime: 3707.6545, mean_mc_travel_dist: 7719.9445, mean_rewards: 52.9665, total_rewards: 2163.6656, mean_steps: 69.0000, mean_ecr: 14.4667 mean_entropies: 2.9795, took: 0.3819s
+2022-06-26 21:46:50,875 [INFO] 	Batch 4/10, mean_policy_losses: 13.728, mean_net_lifetime: 2701.4129, mean_mc_travel_dist: 6438.3087, mean_rewards: 50.0262, total_rewards: 1413.7511, mean_steps: 53.0000, mean_ecr: 19.5177 mean_entropies: 2.9758, took: 0.2669s
+2022-06-26 21:46:51,170 [INFO] 	Batch 5/10, mean_policy_losses: 10.435, mean_net_lifetime: 3009.1692, mean_mc_travel_dist: 6285.6924, mean_rewards: 51.0029, total_rewards: 1752.0307, mean_steps: 58.0000, mean_ecr: 20.8046 mean_entropies: 2.9730, took: 0.2938s
+2022-06-26 21:46:51,287 [INFO] 	Batch 6/10, mean_policy_losses: 177.648, mean_net_lifetime: 2083.7317, mean_mc_travel_dist: 1675.3340, mean_rewards: 122.5725, total_rewards: 1748.6649, mean_steps: 16.0000, mean_ecr: 15.7819 mean_entropies: 2.9723, took: 0.1183s
+2022-06-26 21:46:51,538 [INFO] 	Batch 7/10, mean_policy_losses: 7.478, mean_net_lifetime: 2967.0558, mean_mc_travel_dist: 5610.6870, mean_rewards: 61.8137, total_rewards: 1844.9184, mean_steps: 47.0000, mean_ecr: 21.3941 mean_entropies: 2.9679, took: 0.2494s
+2022-06-26 21:46:51,661 [INFO] 	Batch 8/10, mean_policy_losses: -97.998, mean_net_lifetime: 725.8191, mean_mc_travel_dist: 2666.9681, mean_rewards: 29.0328, total_rewards: 192.4255, mean_steps: 24.0000, mean_ecr: 16.5006 mean_entropies: 2.9634, took: 0.1245s
+2022-06-26 21:46:51,964 [INFO] 	Batch 9/10, mean_policy_losses: -41.695, mean_net_lifetime: 2855.6541, mean_mc_travel_dist: 6253.3174, mean_rewards: 52.8825, total_rewards: 1604.9906, mean_steps: 53.0000, mean_ecr: 18.1056 mean_entropies: 2.9633, took: 0.3016s
+2022-06-26 21:46:52,029 [INFO] Epoch 0: mean_policy_losses: 52.473, mean_net_lifetime: 2498.6327, mean_mc_travel_dist: 4714.0044, mean_entropies: 2.9775, m_net_lifetime_valid: 1077.4610, took: 2.3540s, (0.2080 / 100 batches)
+
+2022-06-26 21:46:52,271 [INFO] Test metrics: Mean network lifetime 2427.6898, mean travel distance: 6368.3994

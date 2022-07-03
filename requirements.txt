@@ -1,0 +1,7 @@
+tensorboard
+gym
+matplotlib
+numba
+numpy
+PyYAML
+torch
