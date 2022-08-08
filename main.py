@@ -360,7 +360,6 @@ def train(actor, critic, train_data, valid_data, save_dir,
         m_net_lifetime = np.mean(net_lifetimes)
         m_mc_travel_dist = np.mean(mc_travel_dists)
 
-
         # Save the weights
         epoch_dir = os.path.join(save_dir, '%s' % epoch)
         if not os.path.exists(epoch_dir):
@@ -490,9 +489,8 @@ if __name__ == '__main__':
     logger.info("Log dir: %s", log_dir)
 
     torch.set_printoptions(sci_mode=False)
-    seed = 46
-    torch.manual_seed(args.seed + 12)
-    np.random.seed(args.seed + 11)
+    torch.manual_seed(args.seed + 11)
+    np.random.seed(args.seed + 12)
     np.set_printoptions(suppress=True)
 
     main(**vars(args))
