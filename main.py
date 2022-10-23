@@ -16,14 +16,14 @@ from utils import NetworkInput, WRSNDataset, Point
 from utils import Config, DrlParameters as dp, WrsnParameters as wp
 from utils import logger, gen_cgrg, device, writer, make_logger, device_str
 
-def decision_maker(mc_state, depot_state, sn_state, mask, actor):
+def decision_maker(mc_state, depot_state, sn_state, adj, mask, actor):
     actor.eval()
     mc_state = mc_state.unsqueeze(0)
     depot_state = depot_state.unsqueeze(0)
     sn_state = sn_state.unsqueeze(0)
 
     with torch.no_grad():
-        logit = actor(mc_state, depot_state, sn_state)
+        logit = actor(mc_state, depot_state, sn_state, adj)
 
     logit = logit + mask.log()
     prob = F.softmax(logit, dim=-1)
@@ -70,6 +70,8 @@ def validate(data_loader, decision_maker, args=None, wp=wp,
         depot_state = torch.from_numpy(depot_state).to(dtype=torch.float32, device=device)
         sn_state = torch.from_numpy(sn_state).to(dtype=torch.float32, device=device)
 
+        adj = env.get_sn_adjacency()
+
         aggregated_ecrs = []
         node_failures = []
         total_reward = 0
@@ -82,9 +84,9 @@ def validate(data_loader, decision_maker, args=None, wp=wp,
                 env.render()
 
             if args is not None:
-                action, prob = decision_maker(mc_state, depot_state, sn_state, mask, *args)
+                action, prob = decision_maker(mc_state, depot_state, sn_state, adj, mask, *args)
             else:
-                action, prob = decision_maker(mc_state, depot_state, sn_state, mask)
+                action, prob = decision_maker(mc_state, depot_state, sn_state, adj, mask)
             
             mask[env.last_action] = 1.0
             (mc_state, depot_state, sn_state), reward, done, _ = env.step(action)
@@ -198,6 +200,8 @@ def train(actor, critic, train_data, valid_data, save_dir,
             depot_state = torch.from_numpy(depot_state).to(dtype=torch.float32, device=device)
             sn_state = torch.from_numpy(sn_state).to(dtype=torch.float32, device=device)
 
+            adj = env.get_sn_adjacency()
+
             values = []
             log_probs = []
             rewards = []
@@ -215,12 +219,12 @@ def train(actor, critic, train_data, valid_data, save_dir,
                 if sample_inp is None:
                     sample_inp = (mc_state, depot_state, sn_state)
 
-                logit = actor(mc_state, depot_state, sn_state)
+                logit = actor(mc_state, depot_state, sn_state, adj)
                 logit = logit + mask.log()
 
                 prob = F.softmax(logit, dim=-1)
 
-                value = critic(mc_state, depot_state, sn_state)
+                value = critic(mc_state, depot_state, sn_state, adj)
 
                 m = torch.distributions.Categorical(prob)
 
@@ -255,7 +259,7 @@ def train(actor, critic, train_data, valid_data, save_dir,
             if not done:
                 value = critic(mc_state.unsqueeze(0), 
                                depot_state.unsqueeze(0), 
-                               sn_state.unsqueeze(0))
+                               sn_state.unsqueeze(0), adj)
                 R = value.detach() if value is not None else value
 
             values.append(R)
@@ -405,7 +409,7 @@ def train(actor, critic, train_data, valid_data, save_dir,
                            m_mc_travel_dist, mm_entropies, m_net_lifetime_valid,
                            time.time() - epoch_start, np.mean(times)))
 
-    writer.add_graph(actor, sample_inp)
+    #writer.add_graph(actor, sample_inp)
 
 
 def main(num_sensors=20, num_targets=10, config=None,

@@ -1,9 +1,36 @@
+import math
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
 from utils import device
 
+class GCNConv(nn.Module):
+    def __init__(self, in_features, out_features):
+        super(GCNConv, self).__init__()
+        self.linear = nn.Linear(in_features, out_features, bias=False)
+
+    def forward(self, input: torch.Tensor, adjacency_hat: torch.sparse_coo_tensor):
+        output = self.linear(input)
+        output = torch.sparse.mm(adjacency_hat, output.squeeze(0))
+        return output.unsqueeze(0)
+
+class GCNEmbedder(nn.Module):
+    def __init__(self, input_size, hidden_size, dropout=0.1):
+        super(GCNEmbedder, self).__init__()
+
+        self.conv1 = GCNConv(input_size, hidden_size)
+        self.conv2 = GCNConv(hidden_size, hidden_size)
+        self.relu = nn.ReLU()
+        self.dropout = nn.Dropout(dropout)
+
+    def forward(self, input: torch.Tensor, adjacency_hat: torch.sparse_coo_tensor):
+        #input = self.dropout(input)
+        output = self.conv1(input, adjacency_hat)
+        output = self.relu(output)
+        output = self.dropout(output)
+        output = self.conv2(output, adjacency_hat)
+        return output 
 
 class Encoder(nn.Module):
     """Encodes the static & dynamic states using 1d Convolution."""
@@ -103,14 +130,16 @@ class MCActor(nn.Module):
         # Define the encoder & decoder models
         self.mc_encoder = Encoder(mc_input_size, hidden_size)
         self.depot_encoder = Encoder(depot_input_size, hidden_size)
-        self.sn_encoder = Encoder(sn_input_size, hidden_size)
+        #self.sn_encoder = Encoder(sn_input_size, hidden_size)
+        self.sn_encoder = GCNEmbedder(sn_input_size, hidden_size)
         self.pointer = Pointer(hidden_size, dropout)
 
         for p in self.parameters():
             if len(p.shape) > 1:
                 nn.init.xavier_uniform_(p)
 
-    def forward(self, mc_input, depot_input, sn_input):
+    #def forward(self, mc_input, depot_input, sn_input):
+    def forward(self, mc_input, depot_input, sn_input, adj):
         """forward.
 
         Parameters
@@ -122,7 +151,7 @@ class MCActor(nn.Module):
         """
         mc_hidden = self.mc_encoder(mc_input)
         depot_hidden = self.depot_encoder(depot_input)
-        sn_hidden = self.sn_encoder(sn_input)
+        sn_hidden = self.sn_encoder(sn_input, adj)
 
         sn_hidden = torch.cat((depot_hidden.unsqueeze(1), sn_hidden), dim=1)
         probs = self.pointer(mc_hidden, sn_hidden.permute(0, 2, 1))
@@ -134,7 +163,8 @@ class Critic(nn.Module):
 
         self.mc_encoder = Encoder(mc_input_size, hidden_size)
         self.depot_encoder = Encoder(depot_input_size, hidden_size)
-        self.sn_encoder = Encoder(sn_input_size, hidden_size)
+        #self.sn_encoder = Encoder(sn_input_size, hidden_size)
+        self.sn_encoder = GCNEmbedder(sn_input_size, hidden_size)
 
         self.fc1 = nn.Linear(hidden_size * 2, hidden_size)
         self.fc2 = nn.Linear(hidden_size, 20)
@@ -144,10 +174,11 @@ class Critic(nn.Module):
             if len(p.shape) > 1:
                 nn.init.xavier_uniform_(p)
 
-    def forward(self, mc_input, depot_input, sn_input):
+    #def forward(self, mc_input, depot_input, sn_input):
+    def forward(self, mc_input, depot_input, sn_input, adj):
         mc_hidden = self.mc_encoder(mc_input)
         depot_hidden = self.depot_encoder(depot_input)
-        sn_hidden = self.sn_encoder(sn_input)
+        sn_hidden = self.sn_encoder(sn_input, adj)
 
         sn_hidden = torch.cat((depot_hidden.unsqueeze(1), sn_hidden), dim=1)
         hidden = mc_hidden.unsqueeze(1).expand_as(sn_hidden)

@@ -3,6 +3,7 @@ from __future__ import annotations
 from queue import PriorityQueue
 
 import numpy as np
+import scipy.sparse as sp
 import enum
 import math
 
@@ -15,7 +16,6 @@ class NodeType(enum.Enum):
     SN = 1
     RN = 2
     TG = 3
-
 
 class Node():
     """Node.
@@ -198,6 +198,8 @@ class WRSNNetwork():
                 eta[u] += 1
 
         ecr = np.zeros(self.num_sensors + 1)
+        calibed_ecr = np.zeros(self.num_sensors + 1)
+
         for u in range(1, self.num_sensors + 1):
             if trace[u] == -1:
                 ecr[u] = 0
@@ -206,6 +208,22 @@ class WRSNNetwork():
                 d = dist(self.nodes[u].position, self.nodes[pu].position)
                 y = (self.nodes[u].no_targets != 0)
                 ecr[u] = energy_consumption(eta[u], y, d, wp=self.wp)
+                calibed_ecr[u] = ecr[u]
+                #self.nodes[u].ecr = ecr[u]
+
+        # add 20% of min intensity Gaussian noise to ecr for each node 
+        amplitude = min(calibed_ecr) * 0.2
+        noise = np.clip(np.random.normal(0, amplitude / 2, calibed_ecr.shape), -amplitude, amplitude)
+        calibed_ecr += noise
+
+        for u in range(1, self.num_sensors + 1):
+            p = np.random.binomial(1, 0.8) # add probability of generating k bit for each node (80%)
+            
+            if trace[u] == -1 or p == 0: 
+                ecr[u] = 0    
+            else:
+                ecr[u] = calibed_ecr[u]
+            
             self.nodes[u].ecr = ecr[u]
 
         return ecr
@@ -344,7 +362,28 @@ class WRSNNetwork():
             state.append(sn.get_state())
         return np.array(state)
 
+    def get_sn_adjacency(self):
+        row = []
+        col = []
 
+        for u, v in self.edges:
+            su, sv = self.nodes[u], self.nodes[v]
+            
+            if su.type == NodeType.SN and sv.type == NodeType.SN and su.is_active and sv.is_active:
+                row.append(u-1)
+                col.append(v-1)
+
+        row = np.array(row)
+        col = np.array(col)
+
+        adj = sp.coo_matrix((np.ones(row.shape[0]), (row, col)),
+                        shape=(self.num_sensors, self.num_sensors),
+                        dtype=np.float32)
+
+        # build symmetric adjacency matrix
+        adj = adj + adj.T.multiply(adj.T > adj) - adj.multiply(adj.T > adj)
+    
+        return adj
 
 if __name__ == '__main__':
     inp = NetworkInput.from_file('net1.inp')

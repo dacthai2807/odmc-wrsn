@@ -1,0 +1,8 @@
+2022-10-23 19:37:39,937 [INFO] Running on device: cuda
+2022-10-23 19:37:39,938 [INFO] Log dir: logs/test4_23_10_2022_19_37_39
+2022-10-23 19:37:39,938 [INFO] Running problem with 20 sensors 10 targets: (checkpoint: None, seed : 123, config: configs/test4.yml)
+2022-10-23 19:37:51,212 [INFO] Generating training dataset
+2022-10-23 19:38:31,288 [INFO] Generating validation dataset
+2022-10-23 19:38:35,206 [INFO] Begin training phase
+2022-10-23 19:38:35,208 [INFO] Start epoch 0
+2022-10-23 19:40:09,359 [INFO] 	Batch 99/10000, mean_policy_losses: 828.013, mean_net_lifetime: 4664.9657, mean_mc_travel_dist: 3066.3107, mean_rewards: 154.8159, total_rewards: 1671.5737, mean_steps: 28.1700, mean_ecr: 0.0313 mean_entropies: 2.9904, took: 94.1495s

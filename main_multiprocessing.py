@@ -58,13 +58,13 @@ def main(log_dir='', num_sensors=20, num_targets=10, config=None,
         critic.share_memory()
 
         processes = []
-        num_processes = 6
+        num_processes = 7
 
         counter = mp.Value('i', 0)
         lock = mp.Lock()
 
         for rank in range(0, num_processes):
-            p = mp.Process(target=train, args=(rank, counter, log_dir, lock, seed, num_sensors, num_targets, actor, critic, save_dir, config))
+            p = mp.Process(target=train, args=(rank + 1, counter, log_dir, lock, seed, num_sensors, num_targets, actor, critic, save_dir, config))
             p.start()
             processes.append(p)
         
@@ -72,7 +72,7 @@ def main(log_dir='', num_sensors=20, num_targets=10, config=None,
             p.join()
 
     else:
-        test_data = WRSNDataset(num_sensors, num_targets, dp.test_size, seed + 19)
+        test_data = WRSNDataset(num_sensors, num_targets, dp.test_size, seed + 2)
         test_loader = DataLoader(test_data, 1, False, num_workers=0)
 
         ret = validate(test_loader, decision_maker, (actor,) , wp, render, verbose, max_step=dp.max_step)
@@ -113,9 +113,9 @@ if __name__ == '__main__':
 
     torch.set_printoptions(sci_mode=False)
 
-    torch.manual_seed(args.seed + 17)
+    torch.manual_seed(args.seed)
     
-    np.random.seed(args.seed + 18)
+    np.random.seed(args.seed + 1)
     np.set_printoptions(suppress=True)
 
     try:

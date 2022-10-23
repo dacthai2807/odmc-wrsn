@@ -1,5 +1,0 @@
-2022-07-31 14:02:13,829 [INFO] Running on device: cuda
-2022-07-31 14:02:13,829 [INFO] Log dir: logs/test_31_07_2022_14_02_13
-2022-07-31 14:02:13,830 [INFO] Running problem with 20 sensors 10 targets: (checkpoint: None, seed : 123, config: configs/test.yml)
-2022-07-31 14:02:21,066 [INFO] Generating training dataset
-2022-07-31 14:03:06,474 [INFO] Generating validation dataset

@@ -2,6 +2,7 @@ import gym
 import time
 import math
 import numpy as np
+import scipy.sparse as sp
 import pyglet
 import os
 from gym import spaces, logger
@@ -10,7 +11,7 @@ from gym.utils import seeding
 
 from utils import WrsnParameters
 from utils import NetworkInput, Point
-from utils import energy_consumption, dist, normalize, bound
+from utils import energy_consumption, dist, normalize, bound, normalize_adjacency_matrix
 from network import WRSNNetwork
 
 __location__ = os.path.dirname(os.path.abspath(__file__))
@@ -375,6 +376,11 @@ class WRSNEnv(gym.Env):
         self.mc.reset()
         self.steps_beyond_done = None
         return self.get_state()
+
+    def get_sn_adjacency(self):
+        adj = self.net.get_sn_adjacency()
+        adj = normalize_adjacency_matrix(adj)
+        return adj
 
     def render(self, mode='human'):
         screen_width = 600
