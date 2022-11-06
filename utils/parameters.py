@@ -156,6 +156,9 @@ class WrsnParameters(Config):
     # hop constraint
     hop = 12
 
+    # idle time
+    idle_time = 2
+
 class DrlParameters(Config):
     __dictpath__ = 'dp'
     # input sizes (do not change them)

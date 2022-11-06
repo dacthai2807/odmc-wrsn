@@ -90,7 +90,7 @@ def validate(data_loader, decision_maker, args=None, wp=wp,
             
             mask[env.last_action] = 1.0
             (mc_state, depot_state, sn_state), reward, done, _ = env.step(action)
-            mask[env.last_action] = 0.0
+            # mask[env.last_action] = 0.0
             # mask[0] = 1.0
                 
             mc_state = torch.from_numpy(mc_state).to(dtype=torch.float32, device=device)
@@ -236,7 +236,7 @@ def train(actor, critic, train_data, valid_data, save_dir,
 
                 mask[env.last_action] = 1.0
                 (mc_state, depot_state, sn_state), reward, done, info = env.step(action.squeeze().item())
-                mask[env.last_action] = 0.0
+                # mask[env.last_action] = 0.0
                 # mask[0] = 1 # always allow MC staying at depot
 
                 mc_state = torch.from_numpy(mc_state).to(dtype=torch.float32, device=device)

@@ -271,11 +271,14 @@ class WRSNEnv(gym.Env):
         reward_t, reward_d = 0.0, 0.0
 
         if idle:
-            self.mc.idle()
-            t1_net = self.net.estimate_trans_time()
-            t1_net_1 = self.net.t_step(t1_net, charging_sensors=None)
-            reward_t = min(t1_net, t1_net_1) 
+            # self.mc.idle()
+            # t1_net = self.net.estimate_trans_time()
+            # t1_net_1 = self.net.t_step(t1_net, charging_sensors=None)
+            # reward_t = min(t1_net, t1_net_1) 
             # self.last_action = -1
+            t1_mc = self.wp.idle_time
+            t1_net = self.net.t_step(t1_mc, charging_sensors=None)
+            reward_t += min(t1_mc, t1_net)
         else:
             # 2 phases: move to dest and charge (or recharge)
             # phase 1: move MC to dest
