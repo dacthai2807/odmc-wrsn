@@ -464,8 +464,7 @@ def main(num_sensors=20, num_targets=10, config=None,
                 lifetime, travel_dist)
 
 
-if __name__ == '__main__':
-    
+if __name__ == '__main__':    
     parser = argparse.ArgumentParser(description="Mobile Charger Trainer")
     parser.add_argument('--num_sensors', '-ns', default=20, type=int)
     parser.add_argument('--num_targets', '-nt', default=10, type=int)
